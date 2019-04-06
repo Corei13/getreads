@@ -1,0 +1,24 @@
+{
+  "name": "getreads",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Dhananjoy Biswas <ebappa1971@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "get": "node src",
+    "lint": "node_modules/.bin/eslint ."
+  },
+  "dependencies": {
+    "chalk": "^2.4.2",
+    "enquirer": "^2.3.0",
+    "irc-message": "^3.0.2",
+    "moniker": "^0.1.2",
+    "split": "^1.0.1",
+    "unzipper": "^0.9.11",
+    "yargs": "^13.2.2"
+  },
+  "devDependencies": {
+    "eslint": "^5.16.0",
+    "eslint-config-airbnb": "^17.1.0"
+  }
+}
