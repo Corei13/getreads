@@ -9,9 +9,12 @@
     "lint": "node_modules/.bin/eslint ."
   },
   "dependencies": {
+    "body-parser": "^1.18.3",
     "chalk": "^2.4.2",
     "enquirer": "^2.3.0",
+    "express": "^4.16.4",
     "irc-message": "^3.0.2",
+    "mime-types": "^2.1.22",
     "moniker": "^0.1.2",
     "split": "^1.0.1",
     "unzipper": "^0.9.11",

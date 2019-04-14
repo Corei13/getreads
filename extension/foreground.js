@@ -8,3 +8,5 @@ btn.className = "buttonBar";
 
 li.appendChild(btn);
 el[0].appendChild(li);
+
+// TODO: add buttons in search page
