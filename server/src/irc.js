@@ -9,7 +9,7 @@ const { prompt } = require('enquirer');
 const EventEmitter = require('events');
 const { parse } = require('irc-message');
 
-const { unzip, unrar, writeStream } = require('./utils');
+const { unzip, unrar, writeStream, delay } = require('./utils');
 
 
 const log = ['green', 'yellow', 'blue', 'white', 'cyan', 'red', 'gray', 'dim']
@@ -18,8 +18,6 @@ const log = ['green', 'yellow', 'blue', 'white', 'cyan', 'red', 'gray', 'dim']
     [c]: (...args) => console.log(chalk[c](args))
   }), {});
 
-const delay = sec => new Promise(resolve => setTimeout(resolve, sec * 1000));
-
 const emitter = new EventEmitter();
 const events = {};
 const client = net.connect({ host: 'irc.irchighway.net', port: '6667' });
@@ -27,13 +25,17 @@ const client = net.connect({ host: 'irc.irchighway.net', port: '6667' });
 const say = text => new Promise((resolve, reject) =>
   client.write(text + '\r\n', err => err ? reject(err) : resolve()));
 
-const sayAndWait = async (messages, { command, params }) => {
+// TODO: add timeout
+const sayAndWait = async (messages, { command, params }, timeout) => {
   const hash = Math.random().toString(16).slice(2);
   events[hash] = p => (!command || command === p.command) && (!params || params(p.params));
   for (const message of messages) {
     await say(message);
   }
-  return new Promise(resolve => emitter.once(hash, resolve));
+  const p = new Promise(resolve => emitter.once(hash, resolve));
+  return !timeout
+    ? p
+    : Promise.race([p, delay(timeout).then(() => { throw new Error(`Timed out after ${timeout}s`); })]);
 };
 
 const connect = username => new Promise((resolve, reject) => {
@@ -153,7 +155,7 @@ const download = async path => {
   // TODO: make it a queue
   const res = await sayAndWait([
     `PRIVMSG #ebooks ${path}`
-  ], { command: 'PRIVMSG', params: ([, text]) => text.includes('DCC SEND') });
+  ], { command: 'PRIVMSG', params: ([, text]) => text.includes('DCC SEND') }, 60);
   const { ip, port, length, file } = parseDCC(res.params[1]);
   return {
     stream: net.connect(port, ip, () => console.log(`Connected to ${ip}:${port}`)),

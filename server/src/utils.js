@@ -4,6 +4,8 @@ const unzipper = require('unzipper');
 const { Readable } = require('stream');
 const { createExtractorFromData } = require('node-unrar-js');
 
+const delay = sec => new Promise(resolve => setTimeout(resolve, sec * 1000));
+
 const reduceStream = (stream, D, F) =>
   new Promise((resolve, reject) =>
     stream
@@ -49,5 +51,6 @@ module.exports = {
   readLines,
   writeStream,
   unzip,
-  unrar
+  unrar,
+  delay
 };
