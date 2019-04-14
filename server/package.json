@@ -16,6 +16,7 @@
     "irc-message": "^3.0.2",
     "mime-types": "^2.1.22",
     "moniker": "^0.1.2",
+    "node-unrar-js": "^0.8.1",
     "split": "^1.0.1",
     "unzipper": "^0.9.11",
     "yargs": "^13.2.2"
