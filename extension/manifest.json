@@ -1,0 +1,11 @@
+{
+  "name": "GetReads",
+  "version": "1.0",
+  "description": "Download books!",
+  "permissions": ["https://www.goodreads.com/book/*"],
+  "content_scripts" : [ {
+    "matches" :[ "*://www.goodreads.com/book/*"],
+    "js" :  ["foreground.js"]
+} ],
+  "manifest_version": 2
+}
