@@ -168,11 +168,13 @@ const getFileList = async (user, trigger) => {
   console.log({
     user, trigger, filename, mime
   });
-  const writable = mime === 'application/zip'
-    ? unzip(stream)
-    : mime === 'application/x-rar-compressed'
-      ? (await unrar(stream)).content
-      : log.yellow(`Unknown mimetype ${mime} for file ${filename} from @${user}`) || stream;
+  const writable = mime === 'text/plain'
+    ? stream
+    : mime === 'application/zip'
+      ? unzip(stream)
+      : mime === 'application/x-rar-compressed'
+        ? (await unrar(stream)).content
+        : log.yellow(`Unknown mimetype ${mime} for file ${filename} from @${user}`) || stream;
 
   await writeStream(writable, path.resolve(__dirname, `./data/${user}.list`));
 };

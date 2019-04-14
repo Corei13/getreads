@@ -64,22 +64,6 @@ const search = (title, author) => data.filter(l => l.includes(title)).sort((a, b
 
 (async () => {
   await IRC.initialize();
-  const triggers = {
-    // Horla: '@Horla',
-    // Oatmeal: '@Oatmeal',
-    // LawdyServer: '@LawdyServer',
-    // Ook: '@Ook',
-    ps2: '@phoomphy',
-    DV8: '@DV8',
-    Musicwench: '@Musicwench',
-    Pondering42: '@Pondering42',
-    Trainpacks: '!trainpacks',
-    dny238: '@dny238',
-  };
-  for (const [name, trigger] of Object.entries(triggers)) {
-    console.log(await IRC.getFileList(name, trigger));
-  }
-
   app.listen(4017, () => {
     console.log('controller listening on port 4017!');
   });

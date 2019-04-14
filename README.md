@@ -1,4 +1,4 @@
 getreads
 ===
 
-Just run `yarn` and `yarn get`!
+Run `yarn` and `yarn get-list`!

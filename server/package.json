@@ -6,7 +6,8 @@
   "license": "MIT",
   "scripts": {
     "get": "node src",
-    "lint": "node_modules/.bin/eslint ."
+    "lint": "node_modules/.bin/eslint .",
+    "get-list": "node src/list"
   },
   "dependencies": {
     "body-parser": "^1.18.3",
