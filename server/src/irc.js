@@ -1,12 +1,15 @@
 const fs = require('fs');
 const net = require('net');
+const path = require('path');
 const split = require('split');
 const chalk = require('chalk');
+const mime = require('mime-types');
 const Moniker = require('moniker');
-const unzipper = require('unzipper');
 const { prompt } = require('enquirer');
 const EventEmitter = require('events');
 const { parse } = require('irc-message');
+
+const { unzip, unrar, writeStream } = require('./utils');
 
 
 const log = ['green', 'yellow', 'blue', 'white', 'cyan', 'red', 'gray', 'dim']
@@ -96,14 +99,6 @@ const connect = username => new Promise((resolve, reject) => {
     .on('error', reject);
 });
 
-const write = (stream, path) => new Promise((resolve, reject) =>
-  stream
-    .pipe(fs.createWriteStream(path))
-    .on('end', resolve)
-    .on('error', reject)
-);
-
-const unzip = stream => stream.pipe(unzipper.ParseOne());
 
 const parseDCC = line => {
   const uint32ToIP = n => {
@@ -155,6 +150,7 @@ const initialize = async () => {
 };
 
 const download = async path => {
+  // TODO: make it a queue
   const res = await sayAndWait([
     `PRIVMSG #ebooks ${path}`
   ], { command: 'PRIVMSG', params: ([, text]) => text.includes('DCC SEND') });
@@ -162,11 +158,26 @@ const download = async path => {
   return {
     stream: net.connect(port, ip, () => console.log(`Connected to ${ip}:${port}`)),
     filename: file,
+    mime: mime.lookup(file),
     size: length
   };
 };
 
-module.exports = { say, initialize, download };
+const getFileList = async (user, trigger) => {
+  const { stream, filename, mime } = await download(trigger);
+  console.log({
+    user, trigger, filename, mime
+  });
+  const writable = mime === 'application/zip'
+    ? unzip(stream)
+    : mime === 'application/x-rar-compressed'
+      ? (await unrar(stream)).content
+      : log.yellow(`Unknown mimetype ${mime} for file ${filename} from @${user}`) || stream;
+
+  await writeStream(writable, path.resolve(__dirname, `./data/${user}.list`));
+};
+
+module.exports = { say, initialize, download, getFileList };
 
 // (async () => {
 //   const res1 = await client.sayAndWait([

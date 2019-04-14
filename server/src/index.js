@@ -1,5 +1,5 @@
 const fs = require('fs');
-const mime = require('mime-types');
+const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
 
@@ -29,10 +29,10 @@ app.get('/download', async (req, res, next) => {
   // TODO: get isbn and other metadata and story
   const { query: { path } } = req;
   try {
-    const { stream, size, filename } = await IRC.download(path);
+    const { stream, size, filename, mime } = await IRC.download(path);
 
     res.set('Content-disposition', 'attachment; filename=' + filename);
-    res.set('Content-Type', mime.lookup(filename) || 'application/octet-stream');
+    res.set('Content-Type', mime || 'application/octet-stream');
     res.set('Content-Length', size);
     stream.pipe(res);
     next();
@@ -52,19 +52,33 @@ app.use(({ requestTime, method, originalUrl }) => {
   console.log(method, originalUrl, elapsed.toFixed(2));
 });
 
-const data = fs.readFileSync('./data/Horla.list')
+const data = fs.readFileSync(path.resolve(__dirname, './data/Horla.list'))
   .toString()
   .split(/\r?\n/)
   .filter(l =>
     l.startsWith('!Horla') &&
     ['epub', 'mobi', 'pdf', 'awz3'].find(e => l.endsWith(e))
   );
-console.log(data.length);
 const score = (l, t, a) => 2 * Number(l.includes(t)) + Number(l.includes(a));
 const search = (title, author) => data.filter(l => l.includes(title)).sort((a, b) => score(b, title, author) - score(a, title, author));
 
 (async () => {
   await IRC.initialize();
+  const triggers = {
+    // Horla: '@Horla',
+    // Oatmeal: '@Oatmeal',
+    // LawdyServer: '@LawdyServer',
+    // Ook: '@Ook',
+    ps2: '@phoomphy',
+    DV8: '@DV8',
+    Musicwench: '@Musicwench',
+    Pondering42: '@Pondering42',
+    Trainpacks: '!trainpacks',
+    dny238: '@dny238',
+  };
+  for (const [name, trigger] of Object.entries(triggers)) {
+    console.log(await IRC.getFileList(name, trigger));
+  }
 
   app.listen(4017, () => {
     console.log('controller listening on port 4017!');

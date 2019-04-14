@@ -1,4 +1,6 @@
+const fs = require('fs');
 const split = require('split');
+const unzipper = require('unzipper');
 const { Readable } = require('stream');
 const { createExtractorFromData } = require('node-unrar-js');
 
@@ -9,6 +11,8 @@ const reduceStream = (stream, D, F) =>
       .on('end', () => resolve(D))
       .on('error', reject)
   );
+
+const unzip = stream => stream.pipe(unzipper.ParseOne());
 
 const unrar = async stream => {
   const chunks = await reduceStream(stream, [], (chunks, chunk) => chunks.push(chunk));
@@ -31,10 +35,19 @@ const unrar = async stream => {
   return { name, content };
 };
 
+const writeStream = (stream, path) =>
+  new Promise((resolve, reject) => stream
+    .pipe(fs.createWriteStream(path))
+    .on('close', resolve)
+    .on('error', reject)
+  );
+
 const readLines = stream =>
   reduceStream(stream.pipe(split(/\r?\n/)), [], (chunks, chunk) => chunks.push(chunk.trim()));
 
 module.exports = {
   readLines,
+  writeStream,
+  unzip,
   unrar
 };
