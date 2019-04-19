@@ -2,11 +2,13 @@ const fs = require("fs");
 const path = require("path");
 const express = require("express");
 const bodyParser = require("body-parser");
+const cors = require("cors");
 
 const IRC = require("./irc");
 
 const app = express();
 app.use(bodyParser.json({ limit: "200mb" }));
+app.use(cors());
 
 app.use((req, res, next) => {
   req.requestTime = Date.now();
@@ -65,7 +67,7 @@ const data = fs
       l.startsWith("!Horla") &&
       ["epub", "mobi", "pdf", "awz3"].find(e => l.endsWith(e))
   );
-const score = (l, t, a) =>
+const score = (l = "", t = "", a = "") =>
   2 *
     Number(
       l
