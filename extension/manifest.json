@@ -2,7 +2,7 @@
   "name": "GetReads",
   "version": "1.0",
   "description": "Download books!",
-  "permissions": ["https://www.goodreads.com/book/*"],
+  "permissions": ["https://www.goodreads.com/book/*", "https://rare-kangaroo-30.localtunnel.me/*"],
   "content_scripts" : [ {
     "matches" :[ "*://www.goodreads.com/book/*"],
     "js" :  ["foreground.js"]
