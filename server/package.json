@@ -5,7 +5,7 @@
   "author": "Dhananjoy Biswas <ebappa1971@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "get": "node src",
+    "dev": "node src",
     "lint": "node_modules/.bin/eslint .",
     "get-list": "node src/list"
   },

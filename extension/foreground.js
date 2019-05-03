@@ -81,9 +81,14 @@ const makeDownloadButton = list => {
   // stop if download exists
   // get Meta
   const { isbn, id, author, title } = getMeta();
+  console.log(title);
   // fetch search list
   const list = await search({ title, author });
   // make button and list
+  if (!list || list.length === 0) {
+    console.error("Failed fecthing data for the title: ", title);
+    return;
+  }
   const button = makeDownloadButton(list);
   // append button
   let el = document.getElementsByClassName("buyButtonBar");
