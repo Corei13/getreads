@@ -25,7 +25,7 @@ const getMeta = () => ({
 });
 
 const search = ({ title, author }) =>
-  fetch(`${rootUrl}/search?title=${title}&&author=${author}`)
+  fetch(`${rootUrl}/search?author=${encodeURI(author)}&title=${encodeURI(title)}`)
     .then(async res => await res.json())
     .then(list => list.map(title => title.split("!Horla ")[1]));
 
@@ -81,8 +81,8 @@ const makeDownloadButton = list => {
   // stop if download exists
   // get Meta
   const { isbn, id, author, title } = getMeta();
-  console.log(title);
   // fetch search list
+  console.log({ title, author });
   const list = await search({ title, author });
   // make button and list
   if (!list || list.length === 0) {

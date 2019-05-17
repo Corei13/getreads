@@ -5,7 +5,7 @@
   "author": "Dhananjoy Biswas <ebappa1971@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "dev": "node src",
+    "dev": "nodemon src",
     "lint": "node_modules/.bin/eslint .",
     "get-list": "node src/list"
   },
@@ -25,6 +25,7 @@
   },
   "devDependencies": {
     "eslint": "^5.16.0",
-    "eslint-config-airbnb": "^17.1.0"
+    "eslint-config-airbnb": "^17.1.0",
+    "nodemon": "^1.19.0"
   }
 }

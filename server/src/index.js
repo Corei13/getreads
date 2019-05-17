@@ -58,7 +58,7 @@ app.use(({ requestTime, method, originalUrl }) => {
   console.log(method, originalUrl, elapsed.toFixed(2));
 });
 
-const data = fs
+const books = fs
   .readFileSync(path.resolve(__dirname, "./data/Horla.list"))
   .toString()
   .split(/\r?\n/)
@@ -67,24 +67,25 @@ const data = fs
       l.startsWith("!Horla") &&
       ["epub", "mobi", "pdf", "awz3"].find(e => l.endsWith(e))
   );
-const score = (l = "", t = "", a = "") =>
-  2 *
-    Number(
-      l
-        .trim()
-        .toLowerCase()
-        .includes(t.trim().toLowerCase())
-    ) +
-  Number(
-    l
-      .trim()
-      .toLowerCase()
-      .includes(a.trim().toLowerCase())
-  );
-const search = (title, author) =>
-  data
-    .filter(l => l.includes(title))
-    .sort((a, b) => score(b, title, author) - score(a, title, author));
+
+const rank = (str, pattern) => {
+  const segments = pattern.split(' ').join('|');
+  const reg = new RegExp(pattern, "gi");
+  return (str.match(reg) || []).length;
+};
+
+const score = (l, t, a) => 2 * rank(l, t) + rank(l, a); 
+
+const search = (title, author) => {
+  const au = author.replace(/[^a-zA-Z0-9\s!?]+/g, ' ');
+  const ti = title.replace(/[^a-zA-Z0-9\s!?]+/g, ' ');
+  const reg = [au, ti].join('|');
+
+  return books
+    .filter(l => l.match(reg, 'gi'))
+    .sort((a, b) => score(b, ti, au) - score(a, ti, au))
+    .slice(0, 5);
+};
 
 (async () => {
   await IRC.initialize();
